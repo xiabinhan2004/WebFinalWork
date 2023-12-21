@@ -55,16 +55,29 @@
         <div class="title">
             <h1>蚊心异言 Chat</h1>  
         </div>
-        <div class="output">
+        <div id="output">
 
             输出的内容
         </div>
 
+
+        <div id="loading" style="display: none;">
+            <div class="loading-icon"></div>
+            <div class="loading-text">等待回答...</div>
+          </div>
+        </body>
+
         <form class="input-bar">
-            <input class="input-tag" type="text" placeholder="input">
-            <button id="123" title="button"><i class='bx bx-up-arrow-alt'></i></button>
+            <input id="input-tag" type="text" placeholder="input">
+
+            <button id="submit" title="button"><i class='bx bx-up-arrow-alt'></i></button>
             <!-- <button title="button" type="submit" id="abc"><i class="bx bx-input"></i></button> -->
         </form>
+
+
+        
+
+
     </div>
       
     
@@ -73,5 +86,11 @@
 
 
   </div>
+
+
 </body>
+<script src="app.js"></script>
+
+
+
 </html>
