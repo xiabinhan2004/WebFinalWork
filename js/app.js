@@ -4,7 +4,9 @@ const inputbox = document.getElementById('input-tag');
 const submitbox = document.getElementById('submit');
 const loadingbox = document.getElementById('loading');
 
-submitbox.addEventListener('click', async () => {
+submitbox.addEventListener('click', async (event) => {
+  event.preventDefault();
+  // 阻止表单的默认提交行为
   let input = inputbox.value;
   addMessage(input, 'user');
   
@@ -15,7 +17,7 @@ submitbox.addEventListener('click', async () => {
 
   // 使用 OpenAI API 获取 ChatGPT 的回答
   let response = await getResponseFromAPI(input);
-  console.log(response)
+  // console.log(response)
 // debugger
   // 隐藏加载动画
   loadingbox.style.display = 'none';
@@ -31,58 +33,39 @@ function addMessage(text, sender) {
   messagebox.innerHTML = text;
   outputbox.appendChild(messagebox);
 
-  // outputbox.scrollTop = outputbox.scrollHeight;
+  outputbox.scrollTop = outputbox.scrollHeight;
   
 }
 
-async function getResponseFromAPI(input) {
+function getResponseFromAPI(input) {
+  return new Promise((resolve, reject) => {
     const endpoint = 'https://api.openai.com/v1/chat/completions';
     let apiKey = 'sess-G1fYlZ53PWAlTMxnShAwJkFTueJpOSauAUsHTsPt'; //换成自己的API Key
     let proprt = input;
 
-    const params = {
+    let params = {
       model: 'gpt-3.5-turbo',
       messages: [{
           role: 'user',
           content: proprt
       }],
-  }
-  let xhr = new XMLHttpRequest();
-  xhr.open('post', 'https://api.openai.com/v1/chat/completions'); 
-  xhr.setRequestHeader('content-type', 'application/json');
-  xhr.setRequestHeader('Authorization', 'Bearer sess-G1fYlZ53PWAlTMxnShAwJkFTueJpOSauAUsHTsPt');
-  xhr.send(JSON.stringify(params));
-  let result
-  xhr.onload = function () {
-      console.log(JSON.parse(xhr.response));
-      let res = JSON.parse(xhr.response)
-      // inputDom.innerHTML = inputDom.innerHTML +
-      //     '<div class="message frnd_message"><p>' + res.choices[0].message.content + '</span><br><span>' +
-      //     new Date().toLocaleString() +
-      console.log(res.choices[0].message.content)
-    
-    // const response = await fetch(endpoint, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${apiKey}`
-    //     },
+    }
+    let xhr = new XMLHttpRequest();
+    xhr.open('post', 'https://api.openai.com/v1/chat/completions'); 
+    xhr.timeout = 100000; 
+    xhr.setRequestHeader('content-type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer sess-G1fYlZ53PWAlTMxnShAwJkFTueJpOSauAUsHTsPt');
+    xhr.send(JSON.stringify(params));
 
-    //     body: JSON.stringify({
-    //         model: "text-davinci-003",
-    //         prompt,
-    //         max_tokens: 100,
-    //         n: 1,
-    //         stop: null,
-    //         temperature: 0.5,
-    //     }),
-    // }
-    // );
-    // const result = await response.json();
-    // console.log(result)
-    // return result.choices[0].text;
-    result = res.choices[0].message.content
-}
+    xhr.onload = function () {
+      let res = JSON.parse(xhr.response);
+      console.log(res.choices[0].message.content);
+      resolve(res.choices[0].message.content);
+    }
 
-return result
+    xhr.onerror = function(e) {
+      console.log('XHR请求失败: ' + e.error);
+      reject(e.error);
+    };
+  });
 }
