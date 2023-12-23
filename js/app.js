@@ -3,8 +3,15 @@ const outputbox = document.getElementById('lis');
 const inputbox = document.getElementById('input-tag');
 const submitbox = document.getElementById('submit');
 const loadingbox = document.getElementById('loading');
+const mid_ico=document.getElementsByClassName('ouput_start_icon')[0]
+
+let conversationHistory = [];
+
+
 
 submitbox.addEventListener('click', async (event) => {
+  mid_ico.style.display = 'none';
+  
   event.preventDefault();
   // 阻止表单的默认提交行为
   let input = inputbox.value;
