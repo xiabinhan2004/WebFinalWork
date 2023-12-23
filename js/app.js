@@ -5,8 +5,8 @@ const submitbox = document.getElementById('submit');
 const loadingbox = document.getElementById('loading');
 const mid_ico=document.getElementsByClassName('ouput_start_icon')[0]
 
-let conversationHistory = [];
-
+let history = [];
+//增加的记忆功能
 
 
 submitbox.addEventListener('click', async (event) => {
@@ -50,11 +50,21 @@ function getResponseFromAPI(input) {
     let apiKey = 'sess-G1fYlZ53PWAlTMxnShAwJkFTueJpOSauAUsHTsPt'; //换成自己的API Key
     let proprt = input;
 
+    // 计算对话历史的总字符数
+    let totalChars = history.reduce((total, message) => total + message.length, 0);
+
+    // 如果总字符数超过4096，从对话历史的开始处删除消息
+    while (totalChars > 4096) {
+      let removedMessage = history.shift();
+      totalChars -= removedMessage.length;
+    }
+
+    history.push(proprt)
     let params = {
       model: 'gpt-3.5-turbo',
       messages: [{
           role: 'user',
-          content: proprt
+          content: history.join("\n")
       }],
     }
     let xhr = new XMLHttpRequest();
@@ -67,6 +77,15 @@ function getResponseFromAPI(input) {
     xhr.onload = function () {
       let res = JSON.parse(xhr.response);
       console.log(res.choices[0].message.content);
+      history.push(res.choices[0].message.content)
+          // 如果总字符数超过4096，从对话历史的开始处删除消息
+          totalChars = history.reduce((total, message) => total + message.length, 0);
+
+          // 如果总字符数超过4096，从对话历史的开始处删除消息
+          while (totalChars > 4096) {
+            let removedMessage = history.shift();
+            totalChars -= removedMessage.length;
+          }
       resolve(res.choices[0].message.content);
     }
 
