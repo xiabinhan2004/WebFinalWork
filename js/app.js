@@ -37,7 +37,9 @@ function addMessage(text, sender) {
   const messagebox = document.createElement('div');
   messagebox.classList.add('message');
   messagebox.classList.add(`${sender}-message`);
-  messagebox.innerHTML = text;
+  const p = document.createElement('p'); // 创建一个新的 p 元素
+  p.innerHTML = text; // 将文本内容添加到 p 元素中
+  messagebox.appendChild(p); // 将 p 元素添加到 messagebox 中
   outputbox.appendChild(messagebox);
 
   outputbox.scrollTop = outputbox.scrollHeight;
@@ -310,3 +312,5 @@ gaoqiqiang.addEventListener('click', async (event) => {
   let response = await getResponseFromAPI(input);
   addMessage(response, 'chatgpt');
 });
+
+
